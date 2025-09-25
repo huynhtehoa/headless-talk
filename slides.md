@@ -31,7 +31,7 @@ layout: default
 
 # Traditional Button Component
 
-```vue {all|1-10|32-45|47-70|all}{maxHeight:'400px'}
+```vue {all|1-10|12-27|28-43|45-70}{maxHeight:'400px'}
 <template>
   <button 
     :class="buttonClass"
@@ -59,24 +59,21 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['click'])
 const isLoading = ref(false)
-
+const handleClick = async () => {
+  isLoading.value = true
+  emit('click')
+  setTimeout(() => isLoading.value = false, 2000)
+}
 
 const buttonClass = computed(() => {
   const baseClass = 'btn'
   const variantClass = `btn--${props.variant}`
   const sizeClass = `btn--${props.size}`
   const loadingClass = isLoading.value ? 'btn--loading' : ''
-  
+
   return [baseClass, variantClass, sizeClass, loadingClass].join(' ')
 })
-
-const handleClick = async () => {
-  isLoading.value = true
-  emit('click')
-  setTimeout(() => isLoading.value = false, 2000)
-}
 </script>
 
 <style scoped>
@@ -108,7 +105,7 @@ layout: default
 
 <v-clicks>
 
-<div class="mb-3">
+<div>
 
 **Problem 1: Design Evolution**
 ```vue
@@ -124,7 +121,7 @@ layout: default
 
 </div>
 
-<div class="mb-3">
+<div>
 
 **Problem 2: Logic Duplication**
 - `ActionButton.vue` • `IconButton.vue` • `LinkButton.vue` • `CardButton.vue`
@@ -132,7 +129,7 @@ layout: default
 
 </div>
 
-<div class="mb-3">
+<div>
 
 **Problem 3: Testing Nightmare**
 ```javascript
@@ -231,11 +228,10 @@ layout: default
 ```javascript
 export function useToggle() {
   const isEnabled = ref(false)
-  
-  const toggle = () => {
+
+  function toggle () {
     isEnabled.value = !isEnabled.value
   }
-  
   return { isEnabled, toggle }
 }
 ```
@@ -246,20 +242,33 @@ export function useToggle() {
 
 ## Flexible Slots
 ```vue
-<HeadlessButton v-slot="{ loading, click }">
-  <MyButton :loading="loading" @click="click">
+<HeadlessToggle v-slot="{ isEnabled, click }">
+  <MyToggle
+    :class="{ disabled: !isEnabled }"
+    @click="click"
+  >
     Save
-  </MyButton>
-</HeadlessButton>
+  </MyToggle>
+</HeadlessToggle>
 ```
 
 </div>
 
 </div>
 
-<div class="mt-8 text-center">
-
-**Multiple root nodes** • **Better TypeScript**
+<div>
+```vue
+<!-- HeadlessToggle -->
+<template>
+  <slot
+    :is-enabled="isEnabled"
+    :click="toggle"
+  />
+</template>
+<script setup>
+  const { isEnabled, toggle } = useToggle();
+</script>
+```
 
 </div>
 
@@ -290,7 +299,7 @@ layout: default
 export function useClickable() {
   const isLoading = ref(false)
   
-  const execute = async (cb) => {
+  async function execute(cb) {
     isLoading.value = true
     await cb()
     isLoading.value = false
@@ -337,7 +346,7 @@ const slotProps = {
   >
     <button 
       class="btn btn--primary"
-      @click="handleClick"
+      @click="handleClick(alo)"
     >
       <Spinner v-if="isLoading" />
       <slot />
@@ -358,26 +367,26 @@ layout: default
 
 ```vue
 <!-- Button variant -->
-<HeadlessClickable v-slot="{ isLoading, handleClick }" :on-click="saveData">
-  <button @click="handleClick" :disabled="isLoading">Save</button>
-</HeadlessClickable>
+<HeadlessButton v-slot="{ isLoading, handleClick }">
+  <button @click="handleClick(saveData)" :disabled="isLoading">Save</button>
+</HeadlessButton>
 
 <!-- Link variant -->
-<HeadlessClickable v-slot="{ isLoading, handleClick }" :on-click="navigate">
-  <a href="#" @click.prevent="handleClick">Continue Reading</a>
-</HeadlessClickable>
+<HeadlessButton v-slot="{ isLoading, handleClick }">
+  <a href="#" @click.prevent="handleClick(navigate)">Continue Reading</a>
+</HeadlessButton>
 
 <!-- Card variant -->
-<HeadlessClickable v-slot="{ isLoading, handleClick }" :on-click="selectItem">
+<HeadlessButton v-slot="{ isLoading, handleClick }">
   <div 
     class="card cursor-pointer"
     :class="{ 'opacity-50': isLoading }"
-    @click="handleClick"
+    @click="handleClick(selectItem)"
   >
     <h3>Product Card</h3>
     <p>Click to select</p>
   </div>
-</HeadlessClickable>
+</HeadlessButton>
 ```
 
 ---
@@ -1044,6 +1053,7 @@ layout: default
 
 # 3rd-party Libraries
 
+- https://tanstack.com/table/latest/docs/introduction
 - https://headlessui.com/v1/vue
 - https://www.radix-ui.com/themes/docs/components/dropdown-menu
 
