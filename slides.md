@@ -746,14 +746,13 @@ Three-layer testing strategy
 layout: default
 ---
 
-# Testing Strategy: Three Layers
+# Testing
 
 <div class="grid grid-cols-3 gap-4 mt-8">
 
 <div>
 
 ### 1. Composable Tests
-<p class="font-bold text-center">Unit</p>
 
 ```javascript
 // Pure logic testing
@@ -772,7 +771,6 @@ test('useToggle toggles state', () => {
 <div>
 
 ### 2. Headless Tests
-<p class="font-bold text-center">Integration</p>
 
 ```javascript
 // Slot and prop behavior
@@ -794,7 +792,6 @@ test('provides correct slot props', () => {
 <div>
 
 ### 3. Styled Tests
-<p class="font-bold text-center">E2E</p>
 
 ```javascript
 // User interaction testing  
@@ -1043,9 +1040,16 @@ layout: default
 layout: default
 ---
 
-# Holistics components
+# Holistics
 
-- https://github.com/holistics/holistics-core/blob/master/packages/design-system/src/components/Button/HButton.vue
+## ~~gần~~ Headless
+- https://github.com/holistics/holistics/blob/master/app/javascript/vue_components/CountDown.vue
+- https://github.com/holistics/holistics/blob/master/app/javascript/core/components/ui/Containers/SizeWatcherContainer.vue
+- https://vee-validate.logaretm.com/v4/guide/components/validation/
+
+## Non-headless
+- https://design.holistics.dev/
+
 
 ---
 layout: default
